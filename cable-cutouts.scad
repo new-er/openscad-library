@@ -1,26 +1,29 @@
-module CableCutoutStraight(cableDiameter, cableLength) {
-  cylinder(cableLength, cableDiameter, cableDiameter, $fn = 100);
-  translate([0, cableDiameter * 0.1, 0])
-    cylinder(cableLength, cableDiameter, cableDiameter, $fn = 100);
+module CableCutoutStraight(cableRadius, cableLength) {
+  cylinder(cableLength, cableRadius, cableRadius, $fn = 100);
+  translate([0, cableRadius * 0.1, 0])
+    cylinder(cableLength, cableRadius, cableRadius, $fn = 100);
 }
 
-module CableCutoutsStraight(cableDiameter, cableLength, count, padding) {
+module CableCutoutsStraight(cableRadius, cableLength, count, padding) {
+  cableDiameter = cableRadius * 2;
   for(i = [0:1:count-1]) {
-    translate([i * (cableDiameter * 2 + padding), 0, 0])
-    CableCutoutStraight(cableDiameter, cableLength);
+    translate([i * (cableDiameter + padding), 0, 0])
+    CableCutoutStraight(cableRadius, cableLength);
   }
 }
 
 
-module CubeWithCableCutoutsStraight(cubeWidth, cubeDepth, cubeHeight, cableCount, cableDiameter, padding) {
+module CubeWithCableCutoutsStraightCenter(cubeWidth, cubeDepth, cubeHeight, cableCount, cableRadius, padding) {
+  cableDiameter = cableRadius * 2;
   difference() {
     cube([cubeWidth, cubeDepth, cubeHeight]);
       rotate([90, 0, 0])
-      translate([(cubeWidth / 2) - (((cableCount - 1) * (cableDiameter + padding))), cubeHeight - cableDiameter, -cubeDepth])
-      CableCutoutsStraight(cableDiameter, cubeDepth, cableCount, padding);
+      translate([(cubeWidth / 2) - (((cableDiameter + padding) * cableCount) / 2) + ((cableDiameter + padding) / 2), cubeHeight - cableRadius, -cubeDepth])
+
+      CableCutoutsStraight(cableRadius, cubeDepth, cableCount, padding);
   }
 }
 
 // test
-CubeWithCableCutoutsStraight(15,30,5, 3, 1.7, 0);
+CubeWithCableCutoutsStraightCenter(70,30,5, 9, 1.7, 2);
 //CableCutoutsStraight(1.7, 35, 5, 1);
